@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
+import { UserMenu } from "@/components/user-menu";
+import { CustomSidebar, SidebarProvider, SidebarTrigger, MainContent } from "@/components/custom-sidebar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,14 +38,21 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <SidebarProvider>
-            <AppSidebar />
-            <main className="flex-1">
-              <div className="flex items-center justify-between p-4 border-b">
-                <SidebarTrigger />
-                <ModeToggle />
-              </div>
-              {children}
-            </main>
+            <div className="flex min-h-screen">
+              <CustomSidebar />
+              <MainContent>
+                <div className="flex items-center justify-between px-6 py-3 border-b">
+                  <div className="flex items-center gap-4">
+                    <SidebarTrigger />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <ModeToggle />
+                    <UserMenu />
+                  </div>
+                </div>
+                {children}
+              </MainContent>
+            </div>
           </SidebarProvider>
         </ThemeProvider>
       </body>

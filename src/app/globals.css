@@ -98,4 +98,10 @@
       color 0.4s cubic-bezier(0.23, 1, 0.32, 1),
       border-color 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   }
+
+  /* Fix sidebar trigger button overlap issue */
+  [data-sidebar="trigger"] {
+    position: relative;
+    z-index: 20;
+  }
 }
