@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  characters    Character[]
+  schedules     Schedule[]
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Character {
+  id            String    @id @default(cuid())
+  userId        String
+  nickname      String
+  itemLevel     Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participants  RaidParticipant[]
+  
+  @@unique([userId, nickname])
+}
+
+model Schedule {
+  id            String    @id @default(cuid())
+  userId        String
+  dayOfWeek     Int       // 0 = Sunday, 1 = Monday, etc.
+  startTime     String    // Format: "HH:MM"
+  endTime       String    // Format: "HH:MM"
+  available     Boolean   @default(true)
+  note          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, dayOfWeek, startTime])
+}
+
+model Raid {
+  id            String    @id @default(cuid())
+  name          String
+  type          RaidType
+  scheduledTime DateTime
+  status        RaidStatus @default(PLANNED)
+  minItemLevel  Int
+  maxPlayers    Int       @default(8)
+  goldReward    Int?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  participants  RaidParticipant[]
+  rewards       Reward[]
+}
+
+model RaidParticipant {
+  id            String    @id @default(cuid())
+  raidId        String
+  characterId   String
+  status        ParticipantStatus @default(PENDING)
+  joinedAt      DateTime  @default(now())
+  
+  raid          Raid      @relation(fields: [raidId], references: [id], onDelete: Cascade)
+  character     Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  @@unique([raidId, characterId])
+}
+
+model Reward {
+  id            String    @id @default(cuid())
+  raidId        String
+  itemName      String
+  quantity      Int       @default(1)
+  goldValue     Int?
+  distributed   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  
+  raid          Raid      @relation(fields: [raidId], references: [id], onDelete: Cascade)
+}
+
+enum RaidType {
+  CELESTIAL     // 天界
+  DREAM         // 夢幻
+  IVORY_TOWER   // 象牙塔
+  PLAGUE        // 瘟疫
+}
+
+enum RaidStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ParticipantStatus {
+  PENDING
+  CONFIRMED
+  DECLINED
+  COMPLETED
+}
