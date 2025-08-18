@@ -1,0 +1,87 @@
+# 開發環境專用的 Docker Compose 配置
+# 包含開發工具和熱重載功能
+
+version: '3.8'
+
+services:
+  # 開發環境的 Next.js 應用
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=dev-secret-key
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - redis
+    networks:
+      - lostark-dev-network
+    restart: unless-stopped
+    command: npm run dev
+
+  # PostgreSQL 資料庫 (開發用)
+  postgres-dev:
+    image: postgres:15-alpine
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d/migrations:ro
+      - ./supabase/seed:/docker-entrypoint-initdb.d/seed:ro
+    networks:
+      - lostark-dev-network
+    restart: unless-stopped
+
+  # Redis (開發用)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-dev-data:/data
+    networks:
+      - lostark-dev-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Supabase CLI (開發工具)
+  supabase-dev:
+    image: supabase/cli:1.219.7
+    ports:
+      - "54321:54321"  # API
+      - "54323:54323"  # Studio
+      - "54324:54324"  # Inbucket
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./supabase:/workspace/supabase
+      - ./:/workspace
+    working_dir: /workspace
+    networks:
+      - lostark-dev-network
+    command: supabase start
+
+volumes:
+  postgres-dev-data:
+    driver: local
+  redis-dev-data:
+    driver: local
+
+networks:
+  lostark-dev-network:
+    driver: bridge

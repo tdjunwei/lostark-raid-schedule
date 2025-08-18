@@ -30,7 +30,12 @@
       "mcp__playwright__browser_press_key",
       "mcp__playwright__browser_hover",
       "mcp__playwright__browser_wait_for",
-      "mcp__playwright__browser_close"
+      "mcp__playwright__browser_close",
+      "Bash(chmod:*)",
+      "Bash(npm run type-check:*)",
+      "mcp__shadcn-ui__get_component",
+      "Bash(psql:*)",
+      "Bash(kill 51163)"
     ],
     "deny": []
   }

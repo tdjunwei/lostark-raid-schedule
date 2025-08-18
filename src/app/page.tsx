@@ -1,269 +1,168 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { RaidActionsMenu } from "@/components/raid-actions-menu"
-import { Users, Calendar, Coins, TrendingUp, Activity, Clock, Shield, CheckCircle } from "lucide-react"
+"use client";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import { 
+  CalendarIcon, 
+  UsersIcon, 
+  TrophyIcon, 
+  CoinsIcon,
+  SwordIcon,
+  ShieldIcon
+} from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Lost Ark 出團管理系統</h2>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Activity className="h-4 w-4" />
-            <span className="text-sm text-muted-foreground">即時更新</span>
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-12 relative">
+          <div className="absolute top-0 right-0">
+            <ModeToggle />
           </div>
-          <RaidActionsMenu />
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            Lost Ark 副本日程表
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            專為 Lost Ark 玩家設計的副本排程管理系統，支援即時協作、收益追蹤、角色管理等功能
+          </p>
+        </div>
+
+        {/* 功能卡片 */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CalendarIcon className="h-5 w-5" />
+                排程管理
+              </CardTitle>
+              <CardDescription>
+                週四到週三的遊戲週期排程，智能衝突檢測
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                asChild
+              >
+                <a href="/dashboard/schedule">查看排程</a>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UsersIcon className="h-5 w-5" />
+                角色管理
+              </CardTitle>
+              <CardDescription>
+                多角色管理，職業分工，裝等追蹤
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                asChild
+              >
+                <a href="/dashboard/characters">管理角色</a>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CoinsIcon className="h-5 w-5" />
+                收益分析
+              </CardTitle>
+              <CardDescription>
+                活金/綁金收益追蹤，成本效益分析
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                asChild
+              >
+                <a href="/dashboard/economics">查看收益</a>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 副本類型展示 */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-center mb-8">支援副本類型</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="raid-celestial">
+              <CardHeader className="text-center">
+                <TrophyIcon className="h-8 w-8 mx-auto mb-2" />
+                <CardTitle>天界</CardTitle>
+              </CardHeader>
+            </Card>
+
+            <Card className="raid-dream">
+              <CardHeader className="text-center">
+                <SwordIcon className="h-8 w-8 mx-auto mb-2" />
+                <CardTitle>夢幻</CardTitle>
+              </CardHeader>
+            </Card>
+
+            <Card className="raid-ivory-tower">
+              <CardHeader className="text-center">
+                <ShieldIcon className="h-8 w-8 mx-auto mb-2" />
+                <CardTitle>象牙塔</CardTitle>
+              </CardHeader>
+            </Card>
+
+            <Card className="raid-plague">
+              <CardHeader className="text-center">
+                <TrophyIcon className="h-8 w-8 mx-auto mb-2" />
+                <CardTitle>瘟疫</CardTitle>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+
+        {/* 進入控制台按鈕 */}
+        <div className="text-center mb-12">
+          <Button size="lg" asChild>
+            <a href="/dashboard">
+              進入控制台
+            </a>
+          </Button>
+        </div>
+
+        {/* 功能特色 */}
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-6">系統特色</h2>
+          <div className="grid md:grid-cols-3 gap-8 text-left">
+            <div>
+              <h3 className="font-semibold mb-2">📊 數據整合</h3>
+              <p className="text-muted-foreground">
+                完美承接 Excel 數據結構，支援匯入匯出
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">⚡ 即時協作</h3>
+              <p className="text-muted-foreground">
+                多人同時編輯，即時狀態同步
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">🎯 智能排程</h3>
+              <p className="text-muted-foreground">
+                自動人員配置，衝突檢測
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-      
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">活躍玩家</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
-              本週參與出團
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">本週副本</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              <CheckCircle className="inline h-3 w-3 mr-1" />
-              已排定團隊
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">總收益</CardTitle>
-            <Coins className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">48,320</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
-              本週金幣收益
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">平均裝等</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,580</div>
-            <p className="text-xs text-muted-foreground">
-              <Activity className="inline h-3 w-3 mr-1" />
-              所有角色平均
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            總覽
-          </TabsTrigger>
-          <TabsTrigger value="schedule" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            本週排程
-          </TabsTrigger>
-          <TabsTrigger value="availability" className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            玩家時段
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  <CardTitle>快速開始</CardTitle>
-                </div>
-                <CardDescription>
-                  管理您的 Lost Ark 團隊排程
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium mb-3 flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4" />
-                      系統功能：
-                    </h3>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2">
-                        <Activity className="h-3 w-3" />
-                        即時協作編輯，多人同時查看和修改
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Clock className="h-3 w-3" />
-                        自動追蹤玩家可用時段
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Users className="h-3 w-3" />
-                        智能配對團隊成員
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Coins className="h-3 w-3" />
-                        收益計算與分配
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <TrendingUp className="h-3 w-3" />
-                        歷史記錄查詢
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  <CardTitle>本週統計</CardTitle>
-                </div>
-                <CardDescription>
-                  團隊活動概況
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">天界副本</span>
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-16 bg-secondary rounded-full">
-                        <div className="h-2 w-12 bg-primary rounded-full"></div>
-                      </div>
-                      <span className="text-xs text-muted-foreground">3/4</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">夢幻副本</span>
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-16 bg-secondary rounded-full">
-                        <div className="h-2 w-8 bg-primary rounded-full"></div>
-                      </div>
-                      <span className="text-xs text-muted-foreground">2/4</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">象牙塔副本</span>
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-16 bg-secondary rounded-full">
-                        <div className="h-2 w-4 bg-primary rounded-full"></div>
-                      </div>
-                      <span className="text-xs text-muted-foreground">1/4</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  <CardTitle>今日行程</CardTitle>
-                </div>
-                <CardDescription>
-                  即將進行的副本活動
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 bg-secondary/50 rounded-md">
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm font-medium">天界副本</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">20:00</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-secondary/50 rounded-md">
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-purple-500" />
-                      <span className="text-sm font-medium">夢幻副本</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">21:30</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-secondary/30 rounded-md opacity-60">
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-orange-500" />
-                      <span className="text-sm font-medium">象牙塔副本</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">已完成</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="schedule" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                <CardTitle>本週副本排程</CardTitle>
-              </div>
-              <CardDescription>
-                查看本週已安排的團隊
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-8">
-                <div className="text-center">
-                  <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-sm text-muted-foreground">
-                    尚未載入排程資料...
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="availability" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <CardTitle>玩家可用時段</CardTitle>
-              </div>
-              <CardDescription>
-                查看各玩家本週可參與時段
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-8">
-                <div className="text-center">
-                  <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-sm text-muted-foreground">
-                    尚未載入玩家資料...
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
+    </main>
+  );
 }

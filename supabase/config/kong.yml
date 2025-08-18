@@ -1,0 +1,101 @@
+# Kong API Gateway 配置
+# 用於 Supabase 服務路由
+
+_format_version: "1.1"
+
+consumers:
+  - username: anon
+    keyauth_credentials:
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+  - username: service_role
+    keyauth_credentials:
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+
+acls:
+  - consumer: anon
+    group: anon
+  - consumer: service_role
+    group: anon
+  - consumer: service_role
+    group: service_role
+
+services:
+  ## REST API
+  - name: rest-v1
+    url: http://supabase-rest:3000/
+    plugins:
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - anon
+            - service_role
+      - name: cors
+    routes:
+      - name: rest-v1-all
+        strip_path: true
+        paths:
+          - "/rest/v1/"
+
+  ## Auth API
+  - name: auth-v1
+    url: http://supabase-auth:9999/
+    plugins:
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - anon
+            - service_role
+      - name: cors
+    routes:
+      - name: auth-v1-all
+        strip_path: true
+        paths:
+          - "/auth/v1/"
+
+  ## Storage API
+  - name: storage-v1
+    url: http://supabase-storage:5000/
+    plugins:
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - anon
+            - service_role
+      - name: cors
+    routes:
+      - name: storage-v1-all
+        strip_path: true
+        paths:
+          - "/storage/v1/"
+
+  ## Realtime API
+  - name: realtime-v1
+    url: http://supabase-realtime:4000/socket
+    plugins:
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - anon
+            - service_role
+      - name: cors
+    routes:
+      - name: realtime-v1-all
+        strip_path: true
+        paths:
+          - "/realtime/v1/"
