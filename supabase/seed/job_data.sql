@@ -50,7 +50,7 @@ INSERT INTO public.jobs (name, category_id, role, logo, description) VALUES
   ('神槍手', (SELECT id FROM category_ids WHERE name = '女槍'), 'DPS', '/icons/jobs/gunslinger.png', '三重武器的專家'),
   
   -- 蘿莉職業
-  ('畫師', (SELECT id FROM category_ids WHERE name = '蘿莉'), 'DPS', '/icons/jobs/artist.png', '繪畫魔法的藝術家'),
+  ('畫師', (SELECT id FROM category_ids WHERE name = '蘿莉'), 'SUPPORT', '/icons/jobs/artist.png', '繪畫魔法的藝術家'),
   ('氣象術士', (SELECT id FROM category_ids WHERE name = '蘿莉'), 'DPS', '/icons/jobs/aeromancer.png', '天氣操控的專家'),
   
   -- 暗殺者職業
