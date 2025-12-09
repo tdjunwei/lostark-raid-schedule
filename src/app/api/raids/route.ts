@@ -37,12 +37,14 @@ export async function GET(request: NextRequest) {
       `)
       .order('scheduled_time', { ascending: false })
 
-    if (status) {
-      query = query.eq('status', status)
+    const validStatuses = ['COMPLETED', 'IN_PROGRESS', 'PLANNED', 'RECRUITING', 'FULL', 'CANCELLED'] as const
+    if (status && validStatuses.includes(status as any)) {
+      query = query.eq('status', status as typeof validStatuses[number])
     }
 
-    if (type) {
-      query = query.eq('type', type)
+    const validTypes = ['CELESTIAL', 'DREAM', 'IVORY_TOWER', 'PLAGUE'] as const
+    if (type && validTypes.includes(type as any)) {
+      query = query.eq('type', type as typeof validTypes[number])
     }
 
     if (limit) {

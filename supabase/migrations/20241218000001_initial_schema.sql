@@ -28,7 +28,7 @@ create table public.user_profiles (
 -- 職業分類系統 (基於 Excel 分析)
 create table public.job_categories (
   id uuid default uuid_generate_v4() primary key,
-  name text not null unique, -- 男戰士、女戰士、魔法師、男格鬥、女格鬥、射手、女槍、蘿莉、暗殺者
+  name text not null unique, -- 男戰士、女戰士、魔法師、男格鬥、女格鬥、男射手、女射手、幻使、暗殺者
   color text not null, -- 代表顏色
   icon text not null, -- 職業圖標路徑
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -249,9 +249,9 @@ create policy "Users can view raid participants" on public.raid_participants
   for select using (true);
 
 create policy "Users can join raids with their characters" on public.raid_participants
-  for insert using (
+  for insert with check (
     exists (
-      select 1 from public.characters 
+      select 1 from public.characters
       where id = character_id and user_id = auth.uid()
     )
   );

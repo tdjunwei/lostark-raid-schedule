@@ -31,8 +31,8 @@ export async function GET(request: Request) {
       query = query.eq('category_id', categoryId)
     }
 
-    if (role) {
-      query = query.eq('role', role)
+    if (role && (role === 'DPS' || role === 'SUPPORT')) {
+      query = query.eq('role', role as 'DPS' | 'SUPPORT')
     }
 
     const { data: jobs, error } = await query

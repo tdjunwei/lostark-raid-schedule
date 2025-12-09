@@ -35,7 +35,19 @@
       "Bash(npm run type-check:*)",
       "mcp__shadcn-ui__get_component",
       "Bash(psql:*)",
-      "Bash(kill 51163)"
+      "Bash(kill 51163)",
+      "Bash(npm outdated:*)",
+      "Bash(npx @tailwindcss/upgrade@latest:*)",
+      "Bash(npx @next/codemod@canary next-async-request-api .)",
+      "Bash(npx @next/codemod@canary next-async-request-api . --force)",
+      "Bash(supabase status:*)",
+      "Bash(npx supabase status)",
+      "Bash(npx supabase:*)",
+      "mcp__playwright__browser_fill_form",
+      "Bash(docker logs:*)",
+      "WebSearch",
+      "WebFetch(domain:lostark.fandom.com)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

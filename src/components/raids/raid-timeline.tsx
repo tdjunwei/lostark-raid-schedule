@@ -167,7 +167,7 @@ export function RaidTimeline({ raidId, canEdit = false, onTimelineUpdate }: Raid
         status: t.id === gateId ? newStatus : t.status as any,
         startTime: t.start_time ? new Date(t.start_time) : undefined,
         completedAt: t.completed_at ? new Date(t.completed_at) : undefined,
-        notes: t.notes,
+        notes: t.notes ?? undefined,
       })))
 
     } catch (error) {

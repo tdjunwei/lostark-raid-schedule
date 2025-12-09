@@ -1,18 +1,38 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { 
-  CalendarIcon, 
-  UsersIcon, 
-  TrophyIcon, 
+import {
+  CalendarIcon,
+  UsersIcon,
+  TrophyIcon,
   CoinsIcon,
   SwordIcon,
   ShieldIcon
 } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is logged in
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        router.push("/dashboard");
+      } else {
+        router.push("/login");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
       <div className="container mx-auto px-4 py-8">

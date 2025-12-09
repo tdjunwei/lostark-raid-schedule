@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/ui/mode-toggle'
-import { 
+import { supabase } from '@/lib/supabase'
+import {
   Calendar,
   Users,
   Search,
@@ -13,7 +14,8 @@ import {
   Settings,
   Home,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -28,7 +30,14 @@ const navigation = [
 
 export function Navigation() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
 
   return (
     <nav className="bg-background border-b">
@@ -68,8 +77,17 @@ export function Navigation() {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="hidden md:flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              登出
+            </Button>
             <ModeToggle />
-            
+
             {/* Mobile menu button */}
             <Button
               variant="ghost"
@@ -94,7 +112,7 @@ export function Navigation() {
                 const Icon = item.icon
                 const isActive = pathname === item.href ||
                   (item.href !== '/' && pathname.startsWith(item.href))
-                
+
                 return (
                   <Link
                     key={item.name}
@@ -112,6 +130,15 @@ export function Navigation() {
                   </Link>
                 )
               })}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2 justify-start text-muted-foreground hover:text-foreground hover:bg-muted"
+              >
+                <LogOut className="w-4 h-4" />
+                登出
+              </Button>
             </div>
           </div>
         )}

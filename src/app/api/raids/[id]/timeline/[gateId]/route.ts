@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; gateId: string } }
+  props: { params: Promise<{ id: string; gateId: string }> }
 ) {
+  const params = await props.params;
   try {
     const supabase = createClient()
 
@@ -84,10 +85,10 @@ export async function PATCH(
     if (status === 'COMPLETED') {
       const { data: allGates } = await supabase
         .from('raid_timeline')
-        .select('status')
+        .select('id, status')
         .eq('raid_id', params.id)
 
-      const allCompleted = allGates?.every(gate => 
+      const allCompleted = allGates?.every(gate =>
         gate.id === params.gateId ? status === 'COMPLETED' : gate.status === 'COMPLETED'
       )
 
@@ -108,8 +109,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; gateId: string } }
+  props: { params: Promise<{ id: string; gateId: string }> }
 ) {
+  const params = await props.params;
   try {
     const supabase = createClient()
 

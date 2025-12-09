@@ -195,12 +195,12 @@ export function RaidSearch({ onRaidSelect, onFilterChange, compact = false }: Ra
 
   const toggleArrayFilter = (key: 'type' | 'mode' | 'status', value: string) => {
     setFilters(prev => {
-      const currentArray = prev[key] || []
+      const currentArray = (prev[key] || []) as string[]
       const newArray = currentArray.includes(value)
         ? currentArray.filter(item => item !== value)
         : [...currentArray, value]
-      
-      return { ...prev, [key]: newArray }
+
+      return { ...prev, [key]: newArray as any }
     })
   }
 

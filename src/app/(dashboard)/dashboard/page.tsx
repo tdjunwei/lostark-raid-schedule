@@ -16,7 +16,13 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<{
+    totalRaids: number
+    completedRaids: number
+    scheduledRaids: number
+    totalCharacters: number
+    upcomingRaids: Array<{ id: string; status: string; scheduled_time: string; name: string }>
+  }>({
     totalRaids: 0,
     completedRaids: 0,
     scheduledRaids: 0,
