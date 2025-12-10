@@ -479,7 +479,7 @@ export type Database = {
       raid_mode: "SOLO" | "NORMAL" | "HARD"
       raid_status: "PLANNED" | "RECRUITING" | "FULL" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED"
       raid_type: "CELESTIAL" | "DREAM" | "IVORY_TOWER" | "PLAGUE"
-      user_role: "ADMIN" | "SCHEDULER" | "PLAYER"
+      user_role: "SUPER_ADMIN" | "ADMIN" | "SCHEDULER" | "PLAYER"
     }
     CompositeTypes: {
       [_ in never]: never

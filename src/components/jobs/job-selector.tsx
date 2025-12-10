@@ -4,13 +4,15 @@ import { useState, useEffect } from 'react'
 import { JobCard } from './job-card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select'
+import { Search } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/types/supabase'
 
@@ -27,16 +29,17 @@ interface JobSelectorProps {
   filterByCategory?: string
 }
 
-export function JobSelector({ 
-  selectedJobId, 
+export function JobSelector({
+  selectedJobId,
   onJobSelect,
   filterByRole,
-  filterByCategory 
+  filterByCategory
 }: JobSelectorProps) {
   const [jobs, setJobs] = useState<Job[]>([])
   const [categories, setCategories] = useState<JobCategory[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>(filterByCategory || 'all')
   const [selectedRole, setSelectedRole] = useState<string>(filterByRole || 'all')
+  const [searchQuery, setSearchQuery] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -75,7 +78,11 @@ export function JobSelector({
   const filteredJobs = jobs.filter(job => {
     const categoryMatch = selectedCategory === 'all' || job.category_id === selectedCategory
     const roleMatch = selectedRole === 'all' || job.role === selectedRole
-    return categoryMatch && roleMatch
+    const searchMatch = searchQuery === '' ||
+      job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    return categoryMatch && roleMatch && searchMatch
   })
 
   const selectedJob = jobs.find(job => job.id === selectedJobId)
@@ -86,6 +93,17 @@ export function JobSelector({
 
   return (
     <div className="space-y-6">
+      {/* Search bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="搜尋職業名稱、分類或描述..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       {/* Filters */}
       <div className="flex gap-4">
         <div className="flex-1">
@@ -99,7 +117,7 @@ export function JobSelector({
               {categories.map(category => (
                 <SelectItem key={category.id} value={category.id}>
                   <div className="flex items-center gap-2">
-                    <div 
+                    <div
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: category.color }}
                     />
@@ -110,7 +128,7 @@ export function JobSelector({
             </SelectContent>
           </Select>
         </div>
-        
+
         <div className="flex-1">
           <label className="text-sm font-medium">職業定位</label>
           <Select value={selectedRole} onValueChange={setSelectedRole}>

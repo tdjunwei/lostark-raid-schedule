@@ -17,18 +17,9 @@ interface WeeklyCalendarProps {
 }
 
 interface TimeSlot {
-  hour: number
+  time: string
   label: string
 }
-
-// 時間段配置 (Lost Ark 主要活動時間)
-const TIME_SLOTS: TimeSlot[] = [
-  { hour: 19, label: '19:00' },
-  { hour: 20, label: '20:00' },
-  { hour: 21, label: '21:00' },
-  { hour: 22, label: '22:00' },
-  { hour: 23, label: '23:00' },
-]
 
 // Lost Ark 週期：週四到週三
 const DAYS = [
@@ -46,6 +37,7 @@ export function WeeklyCalendar({ userId, onScheduleClick, editable = false }: We
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(new Date())
   const [loading, setLoading] = useState(true)
   const [hoveredSlot, setHoveredSlot] = useState<{ day: number; time: string } | null>(null)
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
 
   useEffect(() => {
     // 設定到本週的週四
@@ -64,6 +56,36 @@ export function WeeklyCalendar({ userId, onScheduleClick, editable = false }: We
       loadSchedules()
     }
   }, [userId, currentWeekStart])
+
+  // 動態生成時間槽
+  useEffect(() => {
+    if (schedules.length === 0) {
+      // 如果沒有排程，顯示默認時間槽
+      setTimeSlots([
+        { time: '19:00', label: '19:00' },
+        { time: '20:00', label: '20:00' },
+        { time: '21:00', label: '21:00' },
+        { time: '22:00', label: '22:00' },
+        { time: '23:00', label: '23:00' },
+      ])
+    } else {
+      // 從排程中提取所有唯一的開始時間
+      const uniqueTimes = new Set<string>()
+      schedules.forEach(schedule => {
+        uniqueTimes.add(schedule.start_time)
+      })
+
+      // 轉換為TimeSlot數組並排序
+      const slots = Array.from(uniqueTimes)
+        .sort()
+        .map(time => ({
+          time,
+          label: time
+        }))
+
+      setTimeSlots(slots)
+    }
+  }, [schedules])
 
   const loadSchedules = async () => {
     if (!userId) return
@@ -97,20 +119,16 @@ export function WeeklyCalendar({ userId, onScheduleClick, editable = false }: We
     return date
   }
 
-  const getScheduleForSlot = (dayOfWeek: number, hour: number): Schedule | null => {
-    const timeString = `${hour.toString().padStart(2, '0')}:00`
-    return schedules.find(s => 
-      s.day_of_week === dayOfWeek && 
-      s.start_time <= timeString && 
-      s.end_time > timeString
+  const getScheduleForSlot = (dayOfWeek: number, time: string): Schedule | null => {
+    return schedules.find(s =>
+      s.day_of_week === dayOfWeek &&
+      s.start_time === time
     ) || null
   }
 
-  const handleSlotClick = (dayOfWeek: number, hour: number) => {
+  const handleSlotClick = (dayOfWeek: number, time: string) => {
     if (!editable) return
-    
-    const timeString = `${hour.toString().padStart(2, '0')}:00`
-    onScheduleClick?.(dayOfWeek, timeString)
+    onScheduleClick?.(dayOfWeek, time)
   }
 
   const formatWeekRange = (): string => {
@@ -179,21 +197,21 @@ export function WeeklyCalendar({ userId, onScheduleClick, editable = false }: We
           ))}
 
           {/* 時間段行 */}
-          {TIME_SLOTS.map(timeSlot => (
-            <div key={timeSlot.hour} className="contents">
+          {timeSlots.map(timeSlot => (
+            <div key={timeSlot.time} className="contents">
               <div className="flex items-center justify-center p-2 text-sm font-medium border-r">
                 {timeSlot.label}
               </div>
-              
+
               {DAYS.map(day => {
-                const schedule = getScheduleForSlot(day.key, timeSlot.hour)
-                const isHovered = hoveredSlot?.day === day.key && 
-                                hoveredSlot?.time === timeSlot.label
+                const schedule = getScheduleForSlot(day.key, timeSlot.time)
+                const isHovered = hoveredSlot?.day === day.key &&
+                                hoveredSlot?.time === timeSlot.time
                 const isToday = getDateForDay(day.key).toDateString() === new Date().toDateString()
-                
+
                 return (
                   <div
-                    key={`${day.key}-${timeSlot.hour}`}
+                    key={`${day.key}-${timeSlot.time}`}
                     className={`
                       relative p-2 min-h-[3rem] border border-border cursor-pointer
                       transition-all duration-200 hover:bg-muted/50
@@ -202,8 +220,8 @@ export function WeeklyCalendar({ userId, onScheduleClick, editable = false }: We
                       ${isToday ? 'bg-accent/20' : ''}
                       ${editable ? 'hover:shadow-sm' : ''}
                     `}
-                    onClick={() => handleSlotClick(day.key, timeSlot.hour)}
-                    onMouseEnter={() => setHoveredSlot({ day: day.key, time: timeSlot.label })}
+                    onClick={() => handleSlotClick(day.key, timeSlot.time)}
+                    onMouseEnter={() => setHoveredSlot({ day: day.key, time: timeSlot.time })}
                     onMouseLeave={() => setHoveredSlot(null)}
                   >
                     {schedule && (
@@ -217,19 +235,19 @@ export function WeeklyCalendar({ userId, onScheduleClick, editable = false }: We
                             忙碌
                           </Badge>
                         )}
-                        
+
                         {schedule.note && (
                           <div className="text-xs text-muted-foreground truncate">
                             {schedule.note}
                           </div>
                         )}
-                        
+
                         <div className="text-xs text-muted-foreground">
                           {schedule.start_time} - {schedule.end_time}
                         </div>
                       </div>
                     )}
-                    
+
                     {!schedule && editable && isHovered && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Badge variant="outline" className="text-xs opacity-70">

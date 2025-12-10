@@ -38,15 +38,23 @@ type Character = Database['public']['Tables']['characters']['Row'] & {
 interface CharacterFilterProps {
   onCharacterSelect?: (character: Character) => void
   onFilterChange?: (filters: CharacterFilters) => void
+  onStatsChange?: (stats: {
+    totalCount: number
+    mainCount: number
+    avgItemLevel: number
+    dpsCount: number
+    supportCount: number
+  }) => void
   compact?: boolean
   showUser?: boolean
 }
 
-export function CharacterFilter({ 
-  onCharacterSelect, 
-  onFilterChange, 
+export function CharacterFilter({
+  onCharacterSelect,
+  onFilterChange,
+  onStatsChange,
   compact = false,
-  showUser = true 
+  showUser = true
 }: CharacterFilterProps) {
   const [characters, setCharacters] = useState<Character[]>([])
   const [jobs, setJobs] = useState<any[]>([])
@@ -72,8 +80,11 @@ export function CharacterFilter({
     try {
       setLoading(true)
 
-      // 載入角色資料
-      const { data: charactersData, error: charactersError } = await supabase
+      // 取得當前使用者
+      const { data: { user } } = await supabase.auth.getUser()
+
+      // 載入角色資料 - 根據 showUser 決定是否過濾使用者
+      let query = supabase
         .from('characters')
         .select(`
           *,
@@ -83,6 +94,13 @@ export function CharacterFilter({
           ),
           user:user_profiles (*)
         `)
+
+      // 如果 showUser 為 false，只顯示當前使用者的角色
+      if (!showUser && user) {
+        query = query.eq('user_id', user.id)
+      }
+
+      const { data: charactersData, error: charactersError } = await query
         .order('item_level', { ascending: false })
 
       if (charactersError) throw charactersError
@@ -191,7 +209,7 @@ export function CharacterFilter({
   const stats = useMemo(() => {
     const totalCount = filteredCharacters.length
     const mainCount = filteredCharacters.filter(c => c.is_main).length
-    const avgItemLevel = totalCount > 0 
+    const avgItemLevel = totalCount > 0
       ? Math.round(filteredCharacters.reduce((sum, c) => sum + c.item_level, 0) / totalCount)
       : 0
     const dpsCount = filteredCharacters.filter(c => c.job.role === 'DPS').length
@@ -205,6 +223,10 @@ export function CharacterFilter({
       supportCount,
     }
   }, [filteredCharacters])
+
+  useEffect(() => {
+    onStatsChange?.(stats)
+  }, [stats, onStatsChange])
 
   if (compact) {
     return (

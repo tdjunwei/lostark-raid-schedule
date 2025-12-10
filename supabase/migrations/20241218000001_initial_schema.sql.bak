@@ -6,7 +6,7 @@ create extension if not exists "uuid-ossp";
 create extension if not exists "pgcrypto";
 
 -- 列舉類型
-create type user_role as enum ('SUPER_ADMIN', 'ADMIN', 'SCHEDULER', 'PLAYER');
+create type user_role as enum ('ADMIN', 'SCHEDULER', 'PLAYER');
 create type job_role as enum ('DPS', 'SUPPORT');
 create type raid_type as enum ('CELESTIAL', 'DREAM', 'IVORY_TOWER', 'PLAGUE');
 create type raid_mode as enum ('SOLO', 'NORMAL', 'HARD');
@@ -87,7 +87,7 @@ create table public.raids (
   max_players integer default 8 check (max_players > 0),
   required_dps integer default 0 check (required_dps >= 0),
   required_support integer default 0 check (required_support >= 0),
-  min_item_level integer check (min_item_level >= 1400),
+  min_item_level integer check (min_item_level >= 1490),
   
   -- 經濟模型 (基於 Excel P1-P4 階段數據)
   phase1_cost integer check (phase1_cost >= 0),

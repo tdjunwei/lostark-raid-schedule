@@ -37,10 +37,7 @@ const DAY_NAMES = {
   6: '週六',
 }
 
-const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => ({
-  value: `${i.toString().padStart(2, '0')}:00`,
-  label: `${i.toString().padStart(2, '0')}:00`,
-}))
+// 移除固定的時間選項，改用 Input type="time" 支援任意時間
 
 export function AvailabilityPicker({ 
   userId, 
@@ -202,34 +199,22 @@ export function AvailabilityPicker({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">開始時間</label>
-              <Select value={startTime} onValueChange={setStartTime}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TIME_OPTIONS.map(time => (
-                    <SelectItem key={time.value} value={time.value}>
-                      {time.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="w-full"
+              />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium">結束時間</label>
-              <Select value={endTime} onValueChange={setEndTime}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TIME_OPTIONS.map(time => (
-                    <SelectItem key={time.value} value={time.value}>
-                      {time.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="w-full"
+              />
             </div>
           </div>
 
