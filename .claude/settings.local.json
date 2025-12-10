@@ -47,7 +47,10 @@
       "Bash(docker logs:*)",
       "WebSearch",
       "WebFetch(domain:lostark.fandom.com)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd Lost Ark job class icons and update database\n\n- Downloaded 25 job class icons from Lost Ark Wiki (WebP format)\n- Created public/icons/jobs/ directory with all class icons\n- Added download instructions in public/icons/jobs/README.md\n- Updated database migration to use local icon paths instead of CDN URLs\n- Applied migration: all 26 jobs now reference /icons/jobs/*.png paths\n- Note: Icons are WebP format with .png extension for browser compatibility\n\nIcons cover all job categories:\n- Male/Female Warriors (男戰士/女戰士): 5 icons\n- Male/Female Fighters (男格鬥/女格鬥): 5 icons\n- Male/Female Gunners (男射手/女射手): 5 icons\n- Mages (魔法師): 4 icons\n- Assassins (暗殺者): 4 icons\n- Specialists (幻使): 3 icons\nEOF\n)\")",
+      "Bash(git check-ignore:*)",
+      "Bash(jq:*)"
     ],
     "deny": []
   }
