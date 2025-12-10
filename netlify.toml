@@ -1,0 +1,104 @@
+# Netlify 配置文件
+# Lost Ark Raid Schedule 部署配置
+
+[build]
+  # 構建命令
+  command = "npm run build"
+  # 構建輸出目錄
+  publish = ".next"
+
+[build.environment]
+  # Node.js 版本
+  NODE_VERSION = "22"
+  # NPM 版本
+  NPM_VERSION = "10"
+
+# Next.js 插件配置
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# 重定向規則
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# 環境變量（在 Netlify Dashboard 設置）
+# NEXT_PUBLIC_SUPABASE_URL
+# NEXT_PUBLIC_SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_ROLE_KEY
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# 靜態資源緩存
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# 圖片資源緩存
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# 404 頁面
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404
+
+# 開發環境上下文
+[context.development]
+  command = "npm run dev"
+
+[context.development.environment]
+  NODE_ENV = "development"
+
+# 生產環境上下文
+[context.production]
+  command = "npm run build"
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+# 預覽環境上下文
+[context.deploy-preview]
+  command = "npm run build"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "production"

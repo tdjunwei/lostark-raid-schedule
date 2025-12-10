@@ -1,0 +1,67 @@
+# Next.js 應用 Docker Compose 配置
+# 與 Supabase 的 docker-compose.yml 配合使用
+#
+# 使用方式:
+#   開發環境: ./start-dev.sh
+#   或手動: docker compose -f docker-compose.yml -f docker-compose.app.yml up
+
+version: '3.8'
+
+services:
+  # Next.js 應用
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: lostark-app
+    ports:
+      - "3000:3000"
+    volumes:
+      # 掛載源碼（支持熱重載）
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      # Supabase 配置（連接到 Supabase 容器）
+      - NEXT_PUBLIC_SUPABASE_URL=http://host.docker.internal:54321
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-}
+
+      # Redis 配置
+      - REDIS_URL=redis://redis:6379
+
+      # Node 環境
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+
+      # Next.js 配置
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      - redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - default
+      - supabase_default
+    restart: unless-stopped
+
+  # Redis 緩存
+  redis:
+    image: redis:7-alpine
+    container_name: lostark-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - default
+
+volumes:
+  redis-data:
+
+networks:
+  # 使用 Supabase 的網絡
+  supabase_default:
+    external: true
